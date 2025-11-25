@@ -1,4 +1,3 @@
-
 import { Component, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -25,6 +24,7 @@ export class AppComponent {
   isSidebarVisible = signal(true);
   fontSize = signal<number>(0); // -2 to 2 scale
   fontColor = signal<string>('rgb(30 41 59)'); // Default: slate-900
+  displayMode = signal<'accordion' | 'book'>('accordion');
 
   // Computed signals for derived state
   allTopics = computed(() => this.dataService.getCategories().flatMap(c => c.topics));
@@ -87,6 +87,10 @@ export class AppComponent {
         if (savedFontColor) {
             this.fontColor.set(JSON.parse(savedFontColor));
         }
+        const savedDisplayMode = localStorage.getItem('emConsultantDisplayMode');
+        if (savedDisplayMode) {
+            this.displayMode.set(savedDisplayMode as 'accordion' | 'book');
+        }
     }
 
     // Effect to save states to localStorage
@@ -95,6 +99,7 @@ export class AppComponent {
             localStorage.setItem('emConsultantMastery', JSON.stringify(this.masteryState()));
             localStorage.setItem('emConsultantFontSize', JSON.stringify(this.fontSize()));
             localStorage.setItem('emConsultantFontColor', JSON.stringify(this.fontColor()));
+            localStorage.setItem('emConsultantDisplayMode', this.displayMode());
         }
     });
   }
@@ -106,6 +111,7 @@ export class AppComponent {
 
   onSelectTopic(topicId: number): void {
     this.selectedTopicId.set(topicId);
+    this.isSidebarVisible.set(false); // Auto-hide sidebar on topic selection
   }
 
   onToggleMastery(topicId: number): void {
@@ -130,5 +136,9 @@ export class AppComponent {
 
   onFontColorChange(color: string): void {
     this.fontColor.set(color);
+  }
+
+  toggleDisplayMode(): void {
+    this.displayMode.update(current => current === 'accordion' ? 'book' : 'accordion');
   }
 }

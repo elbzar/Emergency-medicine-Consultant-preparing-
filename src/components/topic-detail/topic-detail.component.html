@@ -1,49 +1,79 @@
 @if (topic(); as topicData) {
   <div class="max-w-4xl mx-auto">
-    <div class="flex justify-between items-start mb-6">
+    <div class="flex justify-between items-start mb-4 flex-wrap gap-4">
       <h1 class="text-3xl font-bold text-slate-900">{{ topicData.title }}</h1>
-      <div class="flex items-center space-x-3 ml-4 flex-shrink-0">
-        <input 
-          type="checkbox" 
-          [id]="'mastery-checkbox-' + topicData.id"
-          class="h-5 w-5 rounded border-gray-300 text-sky-500 focus:ring-sky-500"
-          [checked]="isMastered()"
-          (change)="onMasteryChange()"
-        />
-        <label [for]="'mastery-checkbox-' + topicData.id" class="text-sm font-medium text-slate-700">Mark as Mastered</label>
+      <div class="flex items-center space-x-4 ml-auto">
+        <!-- Display Mode Toggle -->
+        <div class="flex items-center space-x-2">
+          <label for="display-mode-toggle" class="text-sm font-medium text-slate-600">Book View</label>
+          <button (click)="onToggleDisplayMode()" role="switch" [attr.aria-checked]="displayMode() === 'book'" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2" [class.bg-sky-500]="displayMode() === 'book'" [class.bg-gray-300]="displayMode() === 'accordion'">
+            <span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" [class.translate-x-5]="displayMode() === 'book'" [class.translate-x-0]="displayMode() === 'accordion'"></span>
+          </button>
+        </div>
+        <!-- Mastery Checkbox -->
+        <div class="flex items-center space-x-2 pl-4 border-l border-slate-300">
+          <input 
+            type="checkbox" 
+            [id]="'mastery-checkbox-' + topicData.id"
+            class="h-5 w-5 rounded border-gray-300 text-sky-600 focus:ring-sky-500"
+            [checked]="isMastered()"
+            (change)="onMasteryChange()"
+          />
+          <label [for]="'mastery-checkbox-' + topicData.id" class="text-sm font-medium text-slate-700">Mastered</label>
+        </div>
       </div>
     </div>
 
-    <div class="space-y-3">
-      @for (panel of panels; track panel.key) {
-        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm transition-all duration-300">
-          <button 
-            (click)="togglePanel(panel.key)"
-            class="w-full flex justify-between items-center p-4 text-left hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500">
-            <h2 class="text-lg font-semibold text-slate-800">{{ panel.title }}</h2>
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              class="h-6 w-6 text-slate-400 transition-transform duration-300" 
-              [class.rotate-180]="openPanelKey() === panel.key"
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          @if (openPanelKey() === panel.key) {
-            <div class="border-t border-slate-200">
-               <div 
-                [class]="'p-5 bg-white max-w-none ' + proseSizeClass()" 
-                [style.--tw-prose-body]="fontColor()"
-                [style.--tw-prose-headings]="fontColor()"
-                [style.--tw-prose-bold]="fontColor()"
-                [innerHTML]="topicData[panel.key]">
+    <!-- View Mode Content -->
+    @if (displayMode() === 'accordion') {
+      <div class="space-y-4">
+        @for (panel of panels; track panel.key) {
+          <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+            <button 
+              (click)="togglePanel(panel.key)"
+              class="w-full flex justify-between items-center p-4 text-left hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500">
+              <h2 class="text-lg font-semibold text-slate-800">{{ panel.title }}</h2>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                class="h-6 w-6 text-slate-400 transition-transform duration-300" 
+                [class.rotate-180]="openPanelKey() === panel.key"
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            @if (openPanelKey() === panel.key) {
+              <div class="border-t border-slate-200">
+                 <div 
+                  [class]="'p-5 bg-white max-w-none content-auto ' + proseSizeClass()" 
+                  [style.--tw-prose-body]="fontColor()"
+                  [style.--tw-prose-headings]="fontColor()"
+                  [style.--tw-prose-bold]="fontColor()"
+                  [innerHTML]="topicData[panel.key]">
+                </div>
               </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Book View -->
+      <div class="bg-white rounded-xl shadow-lg content-auto">
+        @for (panel of panels; track panel.key) {
+          <div class="p-6 md:p-8 border-b border-slate-200 last:border-b-0">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">{{ panel.title }}</h2>
+            <div 
+              [class]="'max-w-none ' + proseSizeClass()" 
+              [style.--tw-prose-body]="fontColor()"
+              [style.--tw-prose-headings]="fontColor()"
+              [style.--tw-prose-bold]="fontColor()"
+              [innerHTML]="topicData[panel.key]">
             </div>
-          }
-        </div>
-      }
-    </div>
+          </div>
+        }
+      </div>
+    }
+
   </div>
 }

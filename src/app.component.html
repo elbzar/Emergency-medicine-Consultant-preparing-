@@ -15,7 +15,7 @@
   }
 
   <!-- Main Content -->
-  <main class="flex-1 overflow-y-auto bg-slate-50 p-6 lg:p-10 relative">
+  <main class="flex-1 overflow-y-auto bg-gray-100 p-6 lg:p-10 relative">
      @if (!isSidebarVisible()) {
       <button 
         (click)="toggleSidebar()" 
@@ -33,7 +33,9 @@
         [isMastered]="masteryState()[topic.id] || false"
         (masteryToggled)="onToggleMastery(topic.id)"
         [proseSizeClass]="proseSizeClass()"
-        [fontColor]="fontColor()">
+        [fontColor]="fontColor()"
+        [displayMode]="displayMode()"
+        (displayModeToggled)="toggleDisplayMode()">
       </app-topic-detail>
     } @else {
       <app-welcome 

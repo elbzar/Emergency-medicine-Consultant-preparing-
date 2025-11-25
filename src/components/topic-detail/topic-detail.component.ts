@@ -1,4 +1,3 @@
-
 import { Component, ChangeDetectionStrategy, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Topic } from '../../models/data.model';
@@ -16,9 +15,12 @@ interface Panel {
 export class TopicDetailComponent {
   topic = input.required<Topic>();
   isMastered = input.required<boolean>();
-  masteryToggled = output<void>();
   proseSizeClass = input<string>('prose-lg');
   fontColor = input<string>('rgb(30 41 59)');
+  displayMode = input.required<'accordion' | 'book'>();
+
+  masteryToggled = output<void>();
+  displayModeToggled = output<void>();
 
   openPanelKey = signal<string | null>(null);
 
@@ -37,5 +39,9 @@ export class TopicDetailComponent {
 
   onMasteryChange(): void {
     this.masteryToggled.emit();
+  }
+
+  onToggleDisplayMode(): void {
+    this.displayModeToggled.emit();
   }
 }
