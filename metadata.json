@@ -1,0 +1,5 @@
+{
+  "name": "The EM Consultant Reference (vFinal)",
+  "description": "An offline-capable, single-page web application for Emergency Medicine consultants to prepare for oral exams. Features include a clinical light theme, sidebar navigation, real-time search, mastery tracking, and detailed accordion-style topic panels. Prepared by Dr. Osama Youssef, EBEM, MD.",
+  "requestFramePermissions": []
+}

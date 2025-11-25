@@ -1,0 +1,45 @@
+<div class="flex h-screen w-screen overflow-hidden">
+  <!-- Sidebar -->
+  @if (isSidebarVisible()) {
+    <app-sidebar 
+      class="flex-shrink-0"
+      [categories]="filteredCategories()"
+      [progress]="masteryProgress()"
+      (searchChanged)="onSearch($event)"
+      (topicSelected)="onSelectTopic($event)"
+      (sidebarCloseRequested)="toggleSidebar()"
+      (fontSizeChanged)="onFontSizeChange($event)"
+      (fontSizeReset)="onFontSizeReset()"
+      (fontColorChanged)="onFontColorChange($event)">
+    </app-sidebar>
+  }
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto bg-slate-50 p-6 lg:p-10 relative">
+     @if (!isSidebarVisible()) {
+      <button 
+        (click)="toggleSidebar()" 
+        class="absolute top-4 left-4 z-10 p-2 rounded-md bg-white text-slate-700 shadow-lg hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"
+        aria-label="Open sidebar">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    }
+
+    @if (selectedTopic(); as topic) {
+      <app-topic-detail 
+        [topic]="topic"
+        [isMastered]="masteryState()[topic.id] || false"
+        (masteryToggled)="onToggleMastery(topic.id)"
+        [proseSizeClass]="proseSizeClass()"
+        [fontColor]="fontColor()">
+      </app-topic-detail>
+    } @else {
+      <app-welcome 
+        [proseSizeClass]="proseSizeClass()"
+        [fontColor]="fontColor()">
+      </app-welcome>
+    }
+  </main>
+</div>
